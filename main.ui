@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1920</width>
+    <height>1080</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+  <widget class="QPushButton" name="vigenereButton">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>300</y>
+      <width>540</width>
+      <height>48</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 18 12pt &quot;Poppins Semibold&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Vigenere Cipher</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="vigenereExtendedButton">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>368</y>
+      <width>540</width>
+      <height>48</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 18 12pt &quot;Poppins Semibold&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Vigenere Extended Cipher</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="playfairButton">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>436</y>
+      <width>540</width>
+      <height>48</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 18 12pt &quot;Poppins Semibold&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Playfair Cipher</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="EnigmaButton">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>504</y>
+      <width>540</width>
+      <height>48</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 18 12pt &quot;Poppins Semibold&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Enigma Cipher</string>
+    </property>
+   </widget>
+<widget class="QPushButton" name="otpButton">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>572</y>
+      <width>540</width>
+      <height>48</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 18 12pt &quot;Poppins Semibold&quot;;</string>
+    </property>
+    <property name="text">
+     <string>One-Time Pad</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1920</width>
+     <height>18</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
