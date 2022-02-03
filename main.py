@@ -108,7 +108,100 @@ class Vigenere(QtWidgets.QMainWindow):
         main = Main()
         widget.addWidget(main)
         widget.setCurrentIndex(widget.currentIndex()+1)
+
+class ExtendedVigenere(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(ExtendedVigenere, self).__init__()
+        loadUi("extendedvigenere.ui", self)
+        self.isEncrypt = True
+        self.encryptButton.setStyleSheet("background-color: yellow")
+        self.encryptButton.clicked.connect(self.setEncrypt)
+        self.decryptButton.clicked.connect(self.setDecrypt)
+        self.generateButton.clicked.connect(self.generate)
+        self.backButton.clicked.connect(self.backToMain)
         
+        rf = open("plainteks.txt", "r")
+        self.text = rf.read()
+        self.text_input.setText(self.text)
+    
+    def generate(self):
+        self.key = self.key_input.toPlainText()
+        self.text = self.text_input.toPlainText()
+
+        if(self.isEncrypt):
+            self.results.setText(self.encrypt(self.key, self.text))
+        else:
+            self.results.setText(self.decrypt(self.key, self.text))
+    
+    def setEncrypt(self):
+        rf = open("plainteks.txt", "r")
+        self.text = rf.read()
+        self.text_input.setText(self.text)
+        self.results.setText("")
+        self.key_input.setText("")
+        
+        self.text_label.setText("Plainteks")
+        self.resultText.setText("Cipherteks :")
+        self.generateButton.setText("Enkripsi Pesan")
+        self.isEncrypt = True
+        self.encryptButton.setStyleSheet("background-color: yellow")
+        self.decryptButton.setStyleSheet("background-color: none")
+    
+    def setDecrypt(self):
+        rf = open("cipherteks.txt", "r")
+        self.text = rf.read()
+        self.text_input.setText(self.text)
+        self.results.setText("")
+        self.key_input.setText("")
+        
+        self.text_label.setText("Cipherteks")
+        self.resultText.setText("Plainteks :")
+        self.generateButton.setText("Dekripsi Pesan")
+        self.isEncrypt = False
+        self.decryptButton.setStyleSheet("background-color: yellow")
+        self.encryptButton.setStyleSheet("background-color: none")
+    
+    def encrypt(self, k, p):
+        ciphertext = []
+        keyIdx = 0
+        for char in p:
+            charIdx= ord(char)
+            print("Indeks " + char + " : " + str(charIdx))
+            if charIdx != -1:
+                print("Indeks key " + k[keyIdx % len(k)] + " : " + str(ord(k[keyIdx % len(k)])))
+                charIdx = charIdx + ord(k[keyIdx % len(k)])
+                print("Indeks akhir " + char + " : " + str(charIdx))
+                keyIdx += 1
+                print("Indeks Key : " + str(keyIdx))
+
+            # Kondisi apabila charIdx > 256
+            charIdx = charIdx % 256
+            print("Indeks setelah modulo: " + char + " : " + str(charIdx))
+            print("")
+            ciphertext.append(chr(charIdx))
+
+        return ''.join(ciphertext)
+
+    def decrypt(self, k, c):
+        plaintext = []
+        keyIdx = 0
+        for char in c:
+            charIdx= ord(char)
+            if charIdx != -1:
+                charIdx = charIdx - ord(k[keyIdx % len(k)])
+                keyIdx += 1
+
+            # Kondisi apabila charIdx > 256
+            charIdx = charIdx % 256
+            plaintext.append(chr(charIdx))
+        
+        return ''.join(plaintext)
+
+    def backToMain(self):
+        main = Main()
+        widget.addWidget(main)
+        widget.setCurrentIndex(widget.currentIndex()+1)
+
 class OTP(QtWidgets.QMainWindow):
     def __init__(self):
         super(OTP, self).__init__()
@@ -202,11 +295,17 @@ class Main(QtWidgets.QMainWindow):
         super(Main, self).__init__()
         loadUi("main.ui", self)
         self.vigenereButton.clicked.connect(self.moveToVigenere)
+        self.vigenereExtendedButton.clicked.connect(self.moveToExtendedVigenere)
         self.otpButton.clicked.connect(self.moveToOTP)
         
     def moveToVigenere(self):
         vigenere = Vigenere()
         widget.addWidget(vigenere)
+        widget.setCurrentIndex(widget.currentIndex()+1)
+    
+    def moveToExtendedVigenere(self):
+        extendedVigenere = ExtendedVigenere()
+        widget.addWidget(extendedVigenere)
         widget.setCurrentIndex(widget.currentIndex()+1)
         
     def moveToOTP(self):
