@@ -62,7 +62,7 @@
      <string>Playfair Cipher</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="EnigmaButton">
+   <widget class="QPushButton" name="enigmaButton">
     <property name="geometry">
      <rect>
       <x>690</x>
