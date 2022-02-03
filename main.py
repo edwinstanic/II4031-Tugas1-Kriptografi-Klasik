@@ -16,19 +16,29 @@ class Vigenere(QtWidgets.QMainWindow):
         self.decryptButton.clicked.connect(self.setDecrypt)
         self.generateButton.clicked.connect(self.generate)
         self.backButton.clicked.connect(self.backToMain)
+        
+        rf = open("plainteks.txt", "r")
+        self.text = rf.read()
+        self.text_input.setText(self.text)
     
     def generate(self):
         self.key = self.key_input.toPlainText().replace(" ", "").lower()
         self.key = ''.join(filter(str.isalpha, self.key))
         self.text = self.text_input.toPlainText().replace(" ", "").lower()
         self.text = ''.join(filter(str.isalpha, self.text))
+
         if(self.isEncrypt):
-            print(self.encrypt(self.key, self.text))
             self.results.setText(self.encrypt(self.key, self.text))
         else:
             self.results.setText(self.decrypt(self.key, self.text))
     
     def setEncrypt(self):
+        rf = open("plainteks.txt", "r")
+        self.text = rf.read()
+        self.text_input.setText(self.text)
+        self.results.setText("")
+        self.key_input.setText("")
+        
         self.text_label.setText("Plainteks")
         self.resultText.setText("Cipherteks :")
         self.generateButton.setText("Enkripsi Pesan")
@@ -37,6 +47,12 @@ class Vigenere(QtWidgets.QMainWindow):
         self.decryptButton.setStyleSheet("background-color: none")
     
     def setDecrypt(self):
+        rf = open("cipherteks.txt", "r")
+        self.text = rf.read()
+        self.text_input.setText(self.text)
+        self.results.setText("")
+        self.key_input.setText("")
+        
         self.text_label.setText("Cipherteks")
         self.resultText.setText("Plainteks :")
         self.generateButton.setText("Dekripsi Pesan")
@@ -72,6 +88,10 @@ class Vigenere(QtWidgets.QMainWindow):
             if(ord(p[i]) >= 97 and ord(p[i]) <= 122):
                 c = (self.alphabet_to_num(str(p)[i])+self.alphabet_to_num(str(k)[i]))%26
                 cipher_text+=self.num_to_alphabet(c).upper()
+        
+        wf = open("cipherteks.txt", "w")
+        wf.write(cipher_text)
+        
         return cipher_text
     
     def decrypt(self, k, c):
