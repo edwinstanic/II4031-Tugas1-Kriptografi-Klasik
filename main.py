@@ -574,7 +574,6 @@ class Enigma(QtWidgets.QMainWindow):
             self.rotor_3_2 = self.rotor_3_2[-1:] + self.rotor_3_2[:-1]
             
             if(i!=0 and i%25 == 0):
-                print("masuk")
                 self.rotor_2_1 = self.rotor_2_1[-1:] + self.rotor_2_1[:-1]
                 self.rotor_2_2 = self.rotor_2_2[-1:] + self.rotor_2_2[:-1]
             
