@@ -5,8 +5,8 @@ import random
 import string
 
 from PyQt5.uic import loadUi
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtWidgets import QMainWindow, QStackedWidget, QGridLayout, QDialog, QScrollArea, QScrollBar, QWidget, QPushButton, QLabel
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QStackedWidget
 
 class Vigenere(QtWidgets.QMainWindow):
     def __init__(self):
@@ -298,13 +298,6 @@ class Enigma(QtWidgets.QMainWindow):
         rf = open("plainteks.txt", "r")
         self.text = rf.read()
         self.text_input.setText(self.text)
-        
-        self.rotor_1_1 = []
-        self.rotor_1_2 = [22, 11, 24, 3, 5, 12, 26, 8, 4, 13, 20, 25, 9, 18, 21, 10, 1, 6, 15, 14, 7, 2, 23, 16, 19, 17]
-        self.rotor_2_1 = []
-        self.rotor_2_2 = [11, 15, 23, 21, 13, 9, 25, 2, 1, 19, 8, 24, 10, 12, 20, 16, 4, 18, 3, 5, 14, 6, 26, 17, 22, 7]
-        self.rotor_3_1 = []
-        self.rotor_3_2 = [21, 2, 23, 19, 8, 24, 7, 12, 20, 9, 3, 14, 18, 1, 15, 10, 16, 13, 11, 25, 22, 4, 26, 5, 17, 6]
     
     def convertKey(self):
         self.key_in_num = []
@@ -312,6 +305,13 @@ class Enigma(QtWidgets.QMainWindow):
             self.key_in_num.append((self.alphabet_to_num(self.key[i])))
     
     def setRotor(self):
+        self.rotor_1_1 = []
+        self.rotor_1_2 = [22, 11, 24, 3, 5, 12, 26, 8, 4, 13, 20, 25, 9, 18, 21, 10, 1, 6, 15, 14, 7, 2, 23, 16, 19, 17]
+        self.rotor_2_1 = []
+        self.rotor_2_2 = [11, 15, 23, 21, 13, 9, 25, 2, 1, 19, 8, 24, 10, 12, 20, 16, 4, 18, 3, 5, 14, 6, 26, 17, 22, 7]
+        self.rotor_3_1 = []
+        self.rotor_3_2 = [21, 2, 23, 19, 8, 24, 7, 12, 20, 9, 3, 14, 18, 1, 15, 10, 16, 13, 11, 25, 22, 4, 26, 5, 17, 6]
+        
         k1 = self.key_in_num[0]
         temp = k1
         for i in range(26):
@@ -353,12 +353,15 @@ class Enigma(QtWidgets.QMainWindow):
             self.results.setText(self.encrypt())
         else:
             self.results.setText(self.decrypt())
+        
+        self.setRotor()
     
     def setEncrypt(self):
         rf = open("plainteks.txt", "r")
         self.text = rf.read()
         self.text_input.setText(self.text)
         self.results.setText("")
+        self.key_input.setText("")
         
         self.text_label.setText("Plainteks")
         self.resultText.setText("Cipherteks :")
@@ -372,6 +375,7 @@ class Enigma(QtWidgets.QMainWindow):
         self.text = rf.read()
         self.text_input.setText(self.text)
         self.results.setText("")
+        self.key_input.setText("")
         
         self.text_label.setText("Cipherteks")
         self.resultText.setText("Plainteks :")
@@ -390,31 +394,39 @@ class Enigma(QtWidgets.QMainWindow):
         cipher_text = ""
         
         for i in range(len(self.text)):
+            print(str(i))
+            print(self.rotor_3_1)
+            print(self.rotor_3_2)
+            print(self.rotor_2_1)
+            print(self.rotor_2_2)
+            print()
+            
             l = self.text[i]
             p0 = self.alphabet_to_num(l)
             nr1 = self.rotor_1_1[p0-1]
-            for i in range(len(self.rotor_1_2)):
-                if(self.rotor_1_2[i] == nr1):
-                    p1 = i+1
+            for j in range(len(self.rotor_1_2)):
+                if(self.rotor_1_2[j] == nr1):
+                    p1 = j+1
             nr2 = self.rotor_2_1[p1-1]
-            for i in range(len(self.rotor_2_2)):
-                if(self.rotor_2_2[i] == nr2):
-                    p2 = i+1
+            for j in range(len(self.rotor_2_2)):
+                if(self.rotor_2_2[j] == nr2):
+                    p2 = j+1
             nr3 = self.rotor_3_1[p2-1]
-            for i in range(len(self.rotor_3_2)):
-                if(self.rotor_3_2[i] == nr3):
-                    p3 = i+1
+            for k in range(len(self.rotor_3_2)):
+                if(self.rotor_3_2[k] == nr3):
+                    p3 = k+1
             
             cipher_text = cipher_text + self.num_to_alphabet(p3)
             
             self.rotor_3_1 = self.rotor_3_1[-1:] + self.rotor_3_1[:-1]
             self.rotor_3_2 = self.rotor_3_2[-1:] + self.rotor_3_2[:-1]
             
-            if(i%26 == 0):
+            if(i!=0 and i%25 == 0):
+                print("masuk")
                 self.rotor_2_1 = self.rotor_2_1[-1:] + self.rotor_2_1[:-1]
                 self.rotor_2_2 = self.rotor_2_2[-1:] + self.rotor_2_2[:-1]
             
-            if(i%676 == 0):
+            if( i!=0 and i%675 == 0):
                 self.rotor_1_1 = self.rotor_1_1[-1:] + self.rotor_1_1[:-1]
                 self.rotor_1_2 = self.rotor_1_2[-1:] + self.rotor_1_2[:-1]
         
@@ -430,11 +442,11 @@ class Enigma(QtWidgets.QMainWindow):
             self.rotor_3_1 = self.rotor_3_1[-1:] + self.rotor_3_1[:-1]
             self.rotor_3_2 = self.rotor_3_2[-1:] + self.rotor_3_2[:-1]
             
-            if(i%26 == 0):
+            if(i!=0 and i%25 == 0):
                 self.rotor_2_1 = self.rotor_2_1[-1:] + self.rotor_2_1[:-1]
                 self.rotor_2_2 = self.rotor_2_2[-1:] + self.rotor_2_2[:-1]
             
-            if(i%676 == 0):
+            if(i!=0 and i%675 == 0):
                 self.rotor_1_1 = self.rotor_1_1[-1:] + self.rotor_1_1[:-1]
                 self.rotor_1_2 = self.rotor_1_2[-1:] + self.rotor_1_2[:-1]
         
@@ -442,30 +454,37 @@ class Enigma(QtWidgets.QMainWindow):
             self.rotor_3_1 = self.rotor_3_1[1:] + self.rotor_3_1[:1]
             self.rotor_3_2 = self.rotor_3_2[1:] + self.rotor_3_2[:1]
             
-            if(i%26 == 0):
+            if(i!=0 and i%25 == 0):
                 self.rotor_2_1 = self.rotor_2_1[1:] + self.rotor_2_1[:1]
                 self.rotor_2_2 = self.rotor_2_2[1:] + self.rotor_2_2[:1]
             
-            if(i%676 == 0):
+            if(i!=0 and i%675 == 0):
                 self.rotor_1_1 = self.rotor_1_1[1:] + self.rotor_1_1[:1]
                 self.rotor_1_2 = self.rotor_1_2[1:] + self.rotor_1_2[:1]
             
+            print(str(i))
+            print(self.rotor_3_1)
+            print(self.rotor_3_2)
+            print(self.rotor_2_1)
+            print(self.rotor_2_2)
+            print()
+            
             l = self.text[i]
             p0 = self.alphabet_to_num(l)
-            nr1 = self.rotor_3_1[p0-1]
-            for i in range(len(self.rotor_1_2)):
-                if(self.rotor_3_2[i] == nr1):
+            nr1 = self.rotor_3_2[p0-1]
+            for i in range(len(self.rotor_3_1)):
+                if(self.rotor_3_1[i] == nr1):
                     p1 = i+1
-            nr2 = self.rotor_2_1[p1-1]
-            for i in range(len(self.rotor_2_2)):
-                if(self.rotor_2_2[i] == nr2):
+            nr2 = self.rotor_2_2[p1-1]
+            for i in range(len(self.rotor_2_1)):
+                if(self.rotor_2_1[i] == nr2):
                     p2 = i+1
-            nr3 = self.rotor_1_1[p2-1]
-            for i in range(len(self.rotor_3_2)):
-                if(self.rotor_1_2[i] == nr3):
+            nr3 = self.rotor_1_2[p2-1]
+            for i in range(len(self.rotor_1_1)):
+                if(self.rotor_1_1[i] == nr3):
                     p3 = i+1
                     
-            plain_text = plain_text + self.num_to_alphabet(p3)
+            plain_text = self.num_to_alphabet(p3) + plain_text
             
         return plain_text
     
