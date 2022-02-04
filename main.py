@@ -134,7 +134,7 @@ class ExtendedVigenere(QtWidgets.QMainWindow):
         a = self.encryptByte("inikunci!", byte)
 
         self.text = byte
-        self.text_input.setText(str(self.key))
+        self.text_input.setText(str(self.text))
 
     def generate(self):
         self.key = self.key_input.toPlainText()
@@ -160,7 +160,7 @@ class ExtendedVigenere(QtWidgets.QMainWindow):
         self.decryptButton.setStyleSheet("background-color: none")
     
     def setDecrypt(self):
-        rf = open("cipherteks.txt", "r")
+        rf = open("cipherteks.txt", "r", encoding="utf-8")
         self.text = rf.read()
         self.text_input.setText(self.text)
         self.results.setText("")
