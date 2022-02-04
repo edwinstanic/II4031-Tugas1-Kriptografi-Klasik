@@ -6,7 +6,7 @@ import string
 
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QStackedWidget
+from PyQt5.QtWidgets import QStackedWidget, QFileDialog
 
 class Vigenere(QtWidgets.QMainWindow):
     def __init__(self):
@@ -119,11 +119,23 @@ class ExtendedVigenere(QtWidgets.QMainWindow):
         self.decryptButton.clicked.connect(self.setDecrypt)
         self.generateButton.clicked.connect(self.generate)
         self.backButton.clicked.connect(self.backToMain)
+        self.browseButton.clicked.connect(self.browseFile)
         
         rf = open("plainteks.txt", "r")
         self.text = rf.read()
         self.text_input.setText(self.text)
     
+    def browseFile(self):
+        filename=QFileDialog.getOpenFileName(self, 'Open file')
+
+        file = open(filename[0], "rb")
+        byte = file.read()
+
+        a = self.encryptByte("inikunci!", byte)
+
+        self.text = byte
+        self.text_input.setText(str(self.key))
+
     def generate(self):
         self.key = self.key_input.toPlainText()
         self.text = self.text_input.toPlainText()
@@ -174,6 +186,26 @@ class ExtendedVigenere(QtWidgets.QMainWindow):
             charIdx = charIdx % 256
             ciphertext.append(chr(charIdx))
 
+        wf = open("cipherteks.txt", "w", encoding="utf-8")
+        wf.write(''.join(ciphertext))
+
+        return ''.join(ciphertext)
+    
+    def encryptByte(self, k, p):
+        ciphertext = []
+        keyIdx = 0
+        for i in range (len(p)):
+            charIdx = p[i] + ord(k[keyIdx % len(k)])
+            keyIdx += 1
+
+            # Kondisi apabila charIdx > 256
+            charIdx = charIdx % 256
+            ciphertext.append(chr(charIdx))
+
+        wf = open("cipherteks.txt", "w", encoding="utf-8")
+        wf.write(''.join(ciphertext))
+
+        self.results.setText(''.join(ciphertext))
         return ''.join(ciphertext)
 
     def decrypt(self, k, c):
@@ -189,6 +221,19 @@ class ExtendedVigenere(QtWidgets.QMainWindow):
             charIdx = charIdx % 256
             plaintext.append(chr(charIdx))
         
+        return ''.join(plaintext)
+
+    def decryptByte(self, k, p):
+        plaintext = []
+        keyIdx = 0
+        for i in range (len(p)):
+            charIdx = p[i] - ord(k[keyIdx % len(k)])
+            keyIdx += 1
+
+            # Kondisi apabila charIdx > 256
+            charIdx = charIdx % 256
+            plaintext.append(chr(charIdx))
+
         return ''.join(plaintext)
 
     def backToMain(self):
@@ -319,6 +364,9 @@ class Fairplay(QtWidgets.QMainWindow):
                 else:
                     ciphertext.append(keyArr[loc1[0]][loc2[1]])
                     ciphertext.append(keyArr[loc2[0]][loc1[1]])
+        
+        wf = open("cipherteks.txt", "w", encoding="utf-8")
+        wf.write(''.join(ciphertext))
         
         return ''.join(ciphertext)
     
