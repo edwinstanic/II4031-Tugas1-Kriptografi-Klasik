@@ -196,6 +196,164 @@ class ExtendedVigenere(QtWidgets.QMainWindow):
         widget.addWidget(main)
         widget.setCurrentIndex(widget.currentIndex()+1)
 
+class Fairplay(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(Fairplay, self).__init__()
+        loadUi("fairplay.ui", self)
+        self.isEncrypt = True
+        self.encryptButton.setStyleSheet("background-color: yellow")
+        self.encryptButton.clicked.connect(self.setEncrypt)
+        self.decryptButton.clicked.connect(self.setDecrypt)
+        self.generateButton.clicked.connect(self.generate)
+        self.backButton.clicked.connect(self.backToMain)
+        
+        rf = open("plainteks.txt", "r")
+        self.text = rf.read()
+        self.text_input.setText(self.text)
+    
+    def generate(self):
+        self.key = self.key_input.toPlainText().replace(" ", "").upper()
+        self.key = ''.join(filter(str.isalpha, self.key))
+        self.text = self.text_input.toPlainText().replace(" ", "").upper()
+        self.text = ''.join(filter(str.isalpha, self.text))
+
+        if(self.isEncrypt):
+            self.results.setText(self.encrypt(self.key, self.text))
+        else:
+            self.results.setText(self.decrypt(self.key, self.text))
+    
+    def setEncrypt(self):
+        rf = open("plainteks.txt", "r")
+        self.text = rf.read()
+        self.text_input.setText(self.text)
+        self.results.setText("")
+        self.key_input.setText("")
+        
+        self.text_label.setText("Plainteks")
+        self.resultText.setText("Cipherteks :")
+        self.generateButton.setText("Enkripsi Pesan")
+        self.isEncrypt = True
+        self.encryptButton.setStyleSheet("background-color: yellow")
+        self.decryptButton.setStyleSheet("background-color: none")
+    
+    def setDecrypt(self):
+        rf = open("cipherteks.txt", "r")
+        self.text = rf.read()
+        self.text_input.setText(self.text)
+        self.results.setText("")
+        self.key_input.setText("")
+        
+        self.text_label.setText("Cipherteks")
+        self.resultText.setText("Plainteks :")
+        self.generateButton.setText("Dekripsi Pesan")
+        self.isEncrypt = False
+        self.decryptButton.setStyleSheet("background-color: yellow")
+        self.encryptButton.setStyleSheet("background-color: none")
+    
+    def generateKey(self, k, arr):
+        finalKey = []
+        # Menghilangkan huruf berulang dan huruf 'J'
+        for char in k:
+            if char not in finalKey:
+                if char != "J":
+                    # Asumsi menghilangkan huruf 'J' pada key
+                    finalKey.append(char)
+        
+        # Menambahkan huruf yang belum ada
+        for i in range (65,91):
+            if chr(i) not in finalKey:
+                if i != 74:
+                    finalKey.append(chr(i))
+
+        # Memasukkan key ke bujursangkar 5x5
+        k = 0
+        for i in range (5):
+            for j in range(5):
+                arr[i][j] = finalKey[k]
+                k += 1
+
+        return ''.join(finalKey)
+
+    def replaceJ(self, p):
+        p.replace("J", "I")
+
+    def keyIdx(self, c, arr):
+        loc = []
+        for i in range(5):
+            for j in range(5):
+                if arr[i][j] == c:
+                    loc.append(i)
+                    loc.append(j)
+        return loc
+        
+    def encrypt(self, k, p):
+        ciphertext = []
+        keyArr = [[" " for i in range(5)] for j in range(5)]
+        modifiedKey = self.generateKey(k, keyArr)
+
+        # Menyisipkan huruf "X" untuk pasangan huruf yang sama
+        for i in range(0,len(p)+1,2):
+            if i < len(p)-1:
+                if p[i] == p [i+1]:
+                    p = p[:i+1] + "X" + p[i+1:]
+        
+        if len(p) % 2 != 0:
+            p = p + "X"
+        
+        for i in range(0,len(p)+1,2):
+            if i < len(p)-1:
+                loc1 = self.keyIdx(p[i], keyArr)
+                loc2 = self.keyIdx(p[i+1], keyArr)
+
+                # Kondisi 1 - Kunci berada pada baris yang sama
+                if loc1[0] == loc2[0]:
+                    ciphertext.append(keyArr[loc1[0]][(loc1[1]+1) % 5])
+                    ciphertext.append(keyArr[loc2[0]][(loc2[1]+1) % 5])
+
+                # Kondisi 2 - Kunci berada pada kolom yang sama
+                elif loc1[1] == loc2[1]:
+                    ciphertext.append(keyArr[(loc1[0]+1) % 5][loc1[1]])
+                    ciphertext.append(keyArr[(loc2[0]+1) % 5][loc2[1]])
+
+                # Kondisi 3 - Kunci tidak berada pada baris dan kolom yang sama
+                else:
+                    ciphertext.append(keyArr[loc1[0]][loc2[1]])
+                    ciphertext.append(keyArr[loc2[0]][loc1[1]])
+        
+        return ''.join(ciphertext)
+    
+    def decrypt(self, k, c):
+        plaintext = []
+        keyArr = [[" " for i in range(5)] for j in range(5)]
+        modifiedKey = self.generateKey(k, keyArr)
+
+        for i in range(0,len(c)+1,2):
+            if i < len(c)-1:
+                loc1 = self.keyIdx(c[i], keyArr)
+                loc2 = self.keyIdx(c[i+1], keyArr)
+
+                # Kondisi 1 - Kunci berada pada baris yang sama
+                if loc1[0] == loc2[0]:
+                    plaintext.append(keyArr[loc1[0]][(loc1[1]-1) % 5])
+                    plaintext.append(keyArr[loc2[0]][(loc2[1]-1) % 5])
+
+                # Kondisi 2 - Kunci berada pada kolom yang sama
+                elif loc1[1] == loc2[1]:
+                    plaintext.append(keyArr[(loc1[0]-1) % 5][loc1[1]])
+                    plaintext.append(keyArr[(loc2[0]-1) % 5][loc2[1]])
+
+                # Kondisi 3 - Kunci tidak berada pada baris dan kolom yang sama
+                else:
+                    plaintext.append(keyArr[loc1[0]][loc2[1]])
+                    plaintext.append(keyArr[loc2[0]][loc1[1]])
+        
+        return ''.join(plaintext)
+    
+    def backToMain(self):
+        main = Main()
+        widget.addWidget(main)
+        widget.setCurrentIndex(widget.currentIndex()+1)
+
 class OTP(QtWidgets.QMainWindow):
     def __init__(self):
         super(OTP, self).__init__()
@@ -492,12 +650,14 @@ class Enigma(QtWidgets.QMainWindow):
         main = Main()
         widget.addWidget(main)
         widget.setCurrentIndex(widget.currentIndex()+1)
+
 class Main(QtWidgets.QMainWindow):
     def __init__(self):
         super(Main, self).__init__()
         loadUi("main.ui", self)
         self.vigenereButton.clicked.connect(self.moveToVigenere)
         self.vigenereExtendedButton.clicked.connect(self.moveToExtendedVigenere)
+        self.playfairButton.clicked.connect(self.moveToFairplay)
         self.enigmaButton.clicked.connect(self.moveToEnigma)
         self.otpButton.clicked.connect(self.moveToOTP)
         
@@ -509,6 +669,11 @@ class Main(QtWidgets.QMainWindow):
     def moveToExtendedVigenere(self):
         extendedVigenere = ExtendedVigenere()
         widget.addWidget(extendedVigenere)
+        widget.setCurrentIndex(widget.currentIndex()+1)
+    
+    def moveToFairplay(self):
+        fairplay = Fairplay()
+        widget.addWidget(fairplay)
         widget.setCurrentIndex(widget.currentIndex()+1)
         
     def moveToEnigma(self):
