@@ -552,12 +552,6 @@ class Enigma(QtWidgets.QMainWindow):
         cipher_text = ""
         
         for i in range(len(self.text)):
-            print(str(i))
-            print(self.rotor_3_1)
-            print(self.rotor_3_2)
-            print(self.rotor_2_1)
-            print(self.rotor_2_2)
-            print()
             
             l = self.text[i]
             p0 = self.alphabet_to_num(l)
@@ -619,13 +613,6 @@ class Enigma(QtWidgets.QMainWindow):
             if(i!=0 and i%675 == 0):
                 self.rotor_1_1 = self.rotor_1_1[1:] + self.rotor_1_1[:1]
                 self.rotor_1_2 = self.rotor_1_2[1:] + self.rotor_1_2[:1]
-            
-            print(str(i))
-            print(self.rotor_3_1)
-            print(self.rotor_3_2)
-            print(self.rotor_2_1)
-            print(self.rotor_2_2)
-            print()
             
             l = self.text[i]
             p0 = self.alphabet_to_num(l)
